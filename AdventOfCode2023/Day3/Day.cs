@@ -3,7 +3,7 @@
 namespace AdventOfCode2023.Day3
 {
 
-    [Day(ExpectedValue = "13")]
+    [Day(ExpectedValue = "4361")]
     public class Puzzle1 : IDay
     {
         public string GetPuzzle(string input, bool isRealCase)
