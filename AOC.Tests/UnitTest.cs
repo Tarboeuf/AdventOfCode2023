@@ -24,6 +24,36 @@ namespace AOC.Tests
             Console.WriteLine(result);
         }
 
+        [TestCase(@"aze
+qsd
+wxc", 1, 1, 1, ExpectedResult = "azeqdwxc")]
+        [TestCase(@"aze
+qsd
+wxc", 1, 1, 2, ExpectedResult = "azeqwxc")]
+        [TestCase(@"azer
+qsdf
+wxcv", 0, 1, 2, ExpectedResult = "azedwxc")]
+        [TestCase(
+            @"4671.
+23456
+7.35.", 0, 0, 3, ExpectedResult = "12345")]
+        public string GetAllSurroundingTest(string input, int x, int y, int length)
+        {
+            return string.Concat(input.GetLines().ToArray().GetAllSurrounding(x, y, length));
+        }
+
+        [TestCase("....234..", 4, 1, ExpectedResult = 234)]
+        [TestCase("....234..", 5, 1, ExpectedResult = 234)]
+        [TestCase("....234", 5, 1, ExpectedResult = 234)]
+        [TestCase("....234", 6, 1, ExpectedResult = 234)]
+        [TestCase("234...", 0, 1, ExpectedResult = 234)]
+        [TestCase("234...", 1, 1, ExpectedResult = 234)]
+        [TestCase("234...", 2, 1, ExpectedResult = 234)]
+        public int GetNumberPositionedTest(string line, int x, int y)
+        {
+            return line.GetNumberPositioned(x, y).Number;
+        }
+
         public static TestScenario[] Scenarios = GetScenarios().ToArray();
 
 
@@ -54,7 +84,7 @@ namespace AOC.Tests
                     new TestScenario(
                         GetDay(item),
                         attribute.ExpectedValue!,
-                        item.Name,
+                        $"{item.Namespace?.Split(".", StringSplitOptions.RemoveEmptyEntries).Last()}.{item.Name}",
                         Path.Combine(basePath, item.Namespace.Split('.').Last(), attribute.SampleInput),
                         Path.Combine(basePath, item.Namespace.Split('.').Last(), "input.txt"));
             }

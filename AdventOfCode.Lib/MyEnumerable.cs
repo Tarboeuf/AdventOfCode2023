@@ -64,7 +64,74 @@ public static class MyEnumerable
         {
             yield return item;
         }
-    } 
+    }
+
+    public static IEnumerable<char> GetAllSurrounding(this string[] lines, int x, int y, int length)
+    {
+        for (int i = y - 1; i <= y + 1; i++)
+        {
+            for (int j = x - 1; j <= x + length; j++)
+            {
+                if (i == y && j >= x && j <= (x + length - 1))
+                {
+                    continue;
+                }
+
+                if (i < 0 || j < 0 || i >= lines.Length || j >= lines[i].Length)
+                {
+                    continue;
+                }
+                yield return lines[i][j];
+            }
+        }
+    }
+
+    public static IEnumerable<NumberPositioned> GetAllSurroundingNumbers(this string[] lines, int x, int y)
+    {
+        for (int i = y - 1; i <= y + 1; i++)
+        {
+            for (int j = x - 1; j <= x + 1; j++)
+            {
+                if (i == y && j == x)
+                {
+                    continue;
+                }
+
+                if (i < 0 || j < 0 || i >= lines.Length || j >= lines[i].Length)
+                {
+                    continue;
+                }
+
+                if (char.IsDigit(lines[i][j]))
+                {
+                    yield return lines[i].GetNumberPositioned(j, i);
+                }
+            }
+        }
+    }
+
+    public static NumberPositioned GetNumberPositioned(this string line, int x, int y)
+    {
+        int start = x, end = x;
+        for (int i = x; i >= 0; i--)
+        {
+            if (!char.IsDigit(line[i]))
+            {
+                break;
+            }
+            start = i;
+        }
+
+        for (int i = x; i < line.Length; i++)
+        {
+            if (!char.IsDigit(line[i]))
+            {
+                break;
+            }
+            end = i + 1;
+        }
+        return new NumberPositioned { Number = int.Parse(line[start..end]), X = start, Y = y };
+    }
 
     public static T Dump<T>(this T value, string entry)
     {
@@ -76,6 +143,11 @@ public static class MyEnumerable
             {
                 str+= $"{dico.Keys.OfType<object>().ElementAt(i)} : {dico.Values.OfType<object>().ElementAt(i)} , ";
             }
+        }
+        if (value is IEnumerable values)
+        {
+            var e = values.OfType<object>().ToList();
+            str = $"{string.Concat(e)} ({e.Count})";
         }
         Debug.WriteLineIf(Conf.IsDump, $"{entry} : {str}");
         return value;
@@ -89,5 +161,12 @@ public static class MyEnumerable
             result *= value;
         }
         return result;
+    }
+
+    public record NumberPositioned
+    {
+        public int Number { get; init; }
+        public int X { get; init; }
+        public int Y { get; init; }
     }
 }
