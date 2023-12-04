@@ -30,7 +30,7 @@ namespace AdventOfCode2023.Day2
             return games.Select(g =>
                 {
                     var kvps = g.Sets.SelectMany(s => s);
-                    return new { g.Id, dico = kvps.GroupBy(kvp => kvp.Key).ToDictionary(g => g.Key, g => g.Max(t => t.Value)).Dump("Dico") };
+                    return new { g.Id, dico = kvps.GroupBy(kvp => kvp.Key).ToDictionary(g => g.Key, g => g.Max(t => t.Value)).DumpLine("Dico") };
                 })
                 .Select(d => d.dico.Values.Mult())
                 .Sum().ToString();
@@ -63,12 +63,12 @@ namespace AdventOfCode2023.Day2
             return games.Select(g =>
                 {
                     var kvps = g.Sets.SelectMany(s => s);
-                    return new {g.Id, dico = kvps.GroupBy(kvp => kvp.Key).ToDictionary(g => g.Key, g => g.Max(t => t.Value)).Dump("Dico")};
+                    return new {g.Id, dico = kvps.GroupBy(kvp => kvp.Key).ToDictionary(g => g.Key, g => g.Max(t => t.Value)).DumpLine("Dico")};
                 })
                 .Where(d => (!d.dico.ContainsKey("red") || d.dico["red"] <= 12) &&
                             (!d.dico.ContainsKey("green") || d.dico["green"] <= 13) &&
                             (!d.dico.ContainsKey("blue") || d.dico["blue"] <= 14))
-                .Sum(g => g.Id.Dump("Id")).ToString();
+                .Sum(g => g.Id.DumpLine("Id")).ToString();
 
         }
     }

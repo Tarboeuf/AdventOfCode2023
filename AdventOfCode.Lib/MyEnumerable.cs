@@ -133,15 +133,31 @@ public static class MyEnumerable
         return new NumberPositioned { Number = int.Parse(line[start..end]), X = start, Y = y };
     }
 
-    public static T Dump<T>(this T value, string entry)
+    public static T DumpLine<T>(this T value, string? entry = null)
     {
+        if (!Conf.IsDump)
+        {
+            return value;
+        }
+
+        value.Dump(entry);
+        Debug.WriteLine("");
+        return value;
+    }
+
+    public static T Dump<T>(this T value, string? entry = null)
+    {
+        if (!Conf.IsDump)
+        {
+            return value;
+        }
         string str = value?.ToString() ?? "null";
         if (value is IDictionary dico)
         {
             str = "";
             for (int i = 0; i < dico.Count; i++)
             {
-                str+= $"{dico.Keys.OfType<object>().ElementAt(i)} : {dico.Values.OfType<object>().ElementAt(i)} , ";
+                str += $"{dico.Keys.OfType<object>().ElementAt(i)} : {dico.Values.OfType<object>().ElementAt(i)} , ";
             }
         }
         if (value is IEnumerable values)
@@ -149,7 +165,9 @@ public static class MyEnumerable
             var e = values.OfType<object>().ToList();
             str = $"{string.Concat(e)} ({e.Count})";
         }
-        Debug.WriteLineIf(Conf.IsDump, $"{entry} : {str}");
+
+        entry = entry == null ? null : $"{entry} : ";
+        Debug.Write($"{entry}{str}");
         return value;
     }
 

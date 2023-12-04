@@ -22,7 +22,7 @@ namespace AdventOfCode2023.Day3
                     var c = line[x];
                     if (!char.IsDigit(c))
                     {
-                        if (currentItem != null && IsSurroundedBySymbol(lines, x - currentItem.Dump("item").Length, y, currentItem.Length))
+                        if (currentItem != null && IsSurroundedBySymbol(lines, x - currentItem.DumpLine("item").Length, y, currentItem.Length))
                         {
                             values.Add(int.Parse(currentItem));
                         }
@@ -33,7 +33,7 @@ namespace AdventOfCode2023.Day3
                         currentItem += c;
                     }
                 }
-                if (currentItem != null && IsSurroundedBySymbol(lines, width - currentItem.Dump("item").Length, y, currentItem.Length))
+                if (currentItem != null && IsSurroundedBySymbol(lines, width - currentItem.DumpLine("item").Length, y, currentItem.Length))
                 {
                     values.Add(int.Parse(currentItem));
                 }
@@ -43,7 +43,7 @@ namespace AdventOfCode2023.Day3
 
         private bool IsSurroundedBySymbol(string[] input, int x, int y, int currentItemLength)
         {
-            return input.GetAllSurrounding(x, y, currentItemLength).ToList().Dump("Adj").Any(c => c != '.');
+            return input.GetAllSurrounding(x, y, currentItemLength).ToList().DumpLine("Adj").Any(c => c != '.');
         }
     }
     [Day(ExpectedValue = "467835")]
@@ -83,7 +83,7 @@ namespace AdventOfCode2023.Day3
 
         private bool IsSurroundedBySymbol(string[] input, int x, int y, int currentItemLength)
         {
-            return input.GetAllSurrounding(x, y, currentItemLength).ToList().Dump("Adj").Any(c => c != '.');
+            return input.GetAllSurrounding(x, y, currentItemLength).ToList().DumpLine("Adj").Any(c => c != '.');
         }
     }
 }

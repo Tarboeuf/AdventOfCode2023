@@ -7,7 +7,7 @@ namespace AoC.Day1
     {
         public string GetPuzzle(string input, bool isRealCase)
         {
-            return input.GetLines().Select(s => int.Parse(string.Concat(GetFirstNumber(s), GetLastNumber(s))).Dump(s)).Sum().ToString();
+            return input.GetLines().Select(s => int.Parse(string.Concat(GetFirstNumber(s), GetLastNumber(s))).DumpLine(s)).Sum().ToString();
         }
 
         private char GetFirstNumber(string line)
@@ -31,7 +31,7 @@ namespace AoC.Day1
             for (int i = line.Length - 1; i >= 0; i--)
             {
                 if (char.IsDigit(line[i])) return line[i];
-                var test = line[..^(line.Length - i - 1)].Dump("..î");
+                var test = line[..^(line.Length - i - 1)].DumpLine("..î");
 
                 for (int j = 0; j < _spelledDigits.Length; j++)
                 {
