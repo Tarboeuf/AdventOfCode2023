@@ -133,6 +133,14 @@ public static class MyEnumerable
         return new NumberPositioned { Number = int.Parse(line[start..end]), X = start, Y = y };
     }
 
+    public static IEnumerable<long> EnumerateTo(this long start, long range)
+    {
+        for (long i = 0; i <= range; i++)
+        {
+            yield return start + i;
+        }
+    }
+
     public static T DumpLine<T>(this T value, string? entry = null)
     {
         if (!Conf.IsDump)
@@ -143,6 +151,20 @@ public static class MyEnumerable
         value.Dump(entry);
         Debug.WriteLine("");
         return value;
+    }
+
+    public static IEnumerable<(T first, T second)> GetInPairs<T>(this IEnumerable<T> values)
+    {
+        using var enumerator = values.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            var previous = enumerator.Current;
+            if (!enumerator.MoveNext())
+            {
+                yield break;
+            }
+            yield return (previous, enumerator.Current);
+        }
     }
 
     public static T Dump<T>(this T value, string? entry = null)

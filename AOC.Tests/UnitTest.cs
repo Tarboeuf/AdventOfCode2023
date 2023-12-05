@@ -17,7 +17,7 @@ namespace AOC.Tests
             Assert.That(result, Is.EqualTo(scenario.ExpectedResult));
 
 
-            Conf.IsDump = false;
+            Conf.IsDump = scenario.AttributeShouldLog;
             input = File.OpenText(scenario.RealPath).ReadToEnd();
             result = scenario.Day.GetPuzzle(input, true);
             Console.WriteLine(scenario.Day.GetType().Name);
@@ -62,7 +62,7 @@ wxcv", 0, 1, 2, ExpectedResult = "azedwxc")]
             var day = typeof(IDay);
             string basePath = "";
             var days = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => day.IsAssignableFrom(t));
-            yield return new TestScenario(new Day01Puzzle2(), "", "", "", "");
+            yield return new TestScenario(new Day01Puzzle2(), "", "", "", "", false);
             foreach (var item in days.OrderBy(d => d.Name))
             {
                 if (item == day)
@@ -86,7 +86,8 @@ wxcv", 0, 1, 2, ExpectedResult = "azedwxc")]
                         attribute.ExpectedValue!,
                         $"{item.Namespace?.Split(".", StringSplitOptions.RemoveEmptyEntries).Last()}.{item.Name}",
                         Path.Combine(basePath, item.Namespace.Split('.').Last(), attribute.SampleInput),
-                        Path.Combine(basePath, item.Namespace.Split('.').Last(), "input.txt"));
+                        Path.Combine(basePath, item.Namespace.Split('.').Last(), "input.txt"),
+                        attribute.ShouldLog);
             }
         }
 
