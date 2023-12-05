@@ -13,12 +13,7 @@ namespace AdventOfCode2023.Day5
 
             var globalMappingProfile = extract.MappingProfiles.Aggregate(Extensions.CombineMap);
 
-            //extract.MappingProfiles[0].CombineMap(extract.MappingProfiles[1]).Maps.OrderBy(m => m.Source).Distinct().DumpLine();
-            //extract.MappingProfiles[0].CombineMap(extract.MappingProfiles[1]).GetMappedValue(79)
-            //    .DumpLine("MappedValue");
-            //extract.MappingProfiles[1].GetMappedValue(extract.MappingProfiles[0].GetMappedValue(79)).DumpLine("MappedValue2");
-            //var result = extract.Seeds.Select(s => extract.MappingProfiles.Aggregate(s, (i, profile) => profile.GetMappedValue(i))).Min();
-            var result = extract.Seeds.Select(globalMappingProfile.GetMappedValue).Min();
+            var result = extract.Seeds.Select(s => extract.MappingProfiles.Aggregate(s, (i, profile) => profile.GetMappedValue(i))).Min();
 
             return result.ToString();
         }
@@ -63,7 +58,6 @@ namespace AdventOfCode2023.Day5
             }
             
             return mins.Min().ToString();
-            //return result.ToString();
         }
     }
 
