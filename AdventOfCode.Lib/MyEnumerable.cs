@@ -185,7 +185,7 @@ public static class MyEnumerable
         if (value is IEnumerable values)
         {
             var e = values.OfType<object>().ToList();
-            str = $"{string.Concat(e)} ({e.Count})";
+            str = $"{string.Concat(e.Select(v => $"{v} /// "))} ({e.Count})";
         }
 
         entry = entry == null ? null : $"{entry} : ";

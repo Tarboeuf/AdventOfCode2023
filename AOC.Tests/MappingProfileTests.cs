@@ -1,11 +1,12 @@
-﻿using AdventOfCode2023.Day5;
+﻿using AdventOfCode.Lib;
+using AdventOfCode2023.Day5;
 
 namespace AOC.Tests;
 
 public class MappingProfileTests
 {
     [Test]
-    public void TestMappingProfileCombination()
+    public void CombineCombination()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -21,7 +22,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationLargerFirstProfile()
+    public void CombineCombinationLargerFirstProfile()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -37,7 +38,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationLargerSecondProfile()
+    public void CombineCombinationLargerSecondProfile()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -53,7 +54,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationNoOnLeft()
+    public void CombineCombinationNoOnLeft()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -65,7 +66,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationNoOnRight()
+    public void CombineCombinationNoOnRight()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -78,7 +79,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationCrossOnLeft()
+    public void CombineCombinationCrossOnLeft()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -93,7 +94,7 @@ public class MappingProfileTests
         Assert.That(result.Maps[0].Range, Is.EqualTo(2));
     }
     [Test]
-    public void TestMappingProfileCombinationCrossOnRight()
+    public void CombineCombinationCrossOnRight()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -109,7 +110,7 @@ public class MappingProfileTests
     }
 
     [Test]
-    public void TestMappingProfileCombinationContained()
+    public void CombineCombinationContained()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -123,7 +124,7 @@ public class MappingProfileTests
         Assert.That(result.Maps[0].Range, Is.EqualTo(20));
     }
     [Test]
-    public void TestMappingProfileCombinationOutside()
+    public void CombineCombinationOutside()
     {
         MappingProfile result = new MappingProfile();
         Extensions.Combine(
@@ -136,5 +137,63 @@ public class MappingProfileTests
         Assert.That(result.Maps[0].Source, Is.EqualTo(120));
         Assert.That(result.Maps[0].Destination, Is.EqualTo(120));
         Assert.That(result.Maps[0].Range, Is.EqualTo(20));
+    }
+    [Test]
+    public void TestMappingProfileCombinationOutsideMultipleRange()
+    {
+        MappingProfile profile1 = new MappingProfile
+        {
+            Maps =
+            {
+                new Map { Source = 120, Destination = 20, Range = 20 },
+                new Map { Source = 0, Destination = 0, Range = 120 },
+            }
+        };
+
+        MappingProfile profile2 = new MappingProfile
+        {
+            Maps = { new Map { Source = 10, Destination = 110, Range = 50 } }
+        };
+
+        var result = profile1.CombineMap(profile2);
+
+        Assert.That(result.Maps.DumpLine().Count, Is.EqualTo(2));
+        Assert.That(result.Maps[0].Source, Is.EqualTo(10));
+        Assert.That(result.Maps[0].Destination, Is.EqualTo(110));
+        Assert.That(result.Maps[0].Range, Is.EqualTo(50));
+
+        Assert.That(result.Maps[1].Source, Is.EqualTo(120));
+        Assert.That(result.Maps[1].Destination, Is.EqualTo(120));
+        Assert.That(result.Maps[1].Range, Is.EqualTo(20));
+
+    }
+
+    [Test]
+    public void TestMappingProfileCombinationOutsideOneRange()
+    {
+        MappingProfile profile1 = new MappingProfile
+        {
+            Maps =
+            {
+                new Map { Source = 120, Destination = 20, Range = 20 },
+            }
+        };
+
+        MappingProfile profile2 = new MappingProfile
+        {
+            Maps = { new Map { Source = 10, Destination = 110, Range = 50 } }
+        };
+
+        var result = profile1.CombineMap(profile2);
+
+        Assert.That(result.Maps.DumpLine().Count, Is.EqualTo(2));
+        Assert.That(result.Maps[0].Source, Is.EqualTo(10));
+        Assert.That(result.Maps[0].Destination, Is.EqualTo(110));
+        Assert.That(result.Maps[0].Range, Is.EqualTo(50));
+
+        Assert.That(result.Maps[1].Source, Is.EqualTo(120));
+        Assert.That(result.Maps[1].Destination, Is.EqualTo(120));
+        Assert.That(result.Maps[1].Range, Is.EqualTo(20));
+
     }
 }

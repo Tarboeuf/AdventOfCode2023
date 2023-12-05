@@ -13,6 +13,10 @@ namespace AdventOfCode2023.Day5
 
             var globalMappingProfile = extract.MappingProfiles.Aggregate(Extensions.CombineMap);
 
+            //extract.MappingProfiles[0].CombineMap(extract.MappingProfiles[1]).Maps.OrderBy(m => m.Source).Distinct().DumpLine();
+            //extract.MappingProfiles[0].CombineMap(extract.MappingProfiles[1]).GetMappedValue(79)
+            //    .DumpLine("MappedValue");
+            //extract.MappingProfiles[1].GetMappedValue(extract.MappingProfiles[0].GetMappedValue(79)).DumpLine("MappedValue2");
             //var result = extract.Seeds.Select(s => extract.MappingProfiles.Aggregate(s, (i, profile) => profile.GetMappedValue(i))).Min();
             var result = extract.Seeds.Select(globalMappingProfile.GetMappedValue).Min();
 
@@ -26,12 +30,39 @@ namespace AdventOfCode2023.Day5
         public string GetPuzzle(string input, bool isRealCase)
         {
             var extract = input.Extract();
-            extract.Seeds.GetInPairs().Sum(p => p.second).Dump();
-            //var result = extract.Seeds.GetInPairs().SelectMany(p => p.first.EnumerateTo(p.second)).Distinct().Count()
-            //    .DumpLine(">");
-            //    .Select(s => extract.MappingProfiles.Aggregate(s, (i, profile) => profile.GetMappedValue(i))).Min();
+            var pairs = extract.Seeds.GetInPairs().ToList();
 
-            return "46";
+            var globalMappingProfile = extract.MappingProfiles.Aggregate(Extensions.CombineMap);
+            List<long> mins = new List<long>();
+            var orderedMaps = globalMappingProfile.Maps.Distinct().OrderBy(m => m.Destination).ToList();
+            foreach (var map in orderedMaps)
+            {
+                foreach (var valueTuple in pairs)
+                {
+                    long start = valueTuple.first;
+                    long end = valueTuple.first + valueTuple.second;
+                    if (map.Source > end)
+                    {
+                        continue;
+                    }
+
+                    if (map.SR < start)
+                    {
+                        continue;
+                    }
+                    if(map.TryGetMappedValue(Math.Max(map.Source, start), out long min))
+                    {
+                        mins.Add(min);
+                    }
+                }
+
+                if (mins.Any())
+                {
+                    break;
+                }
+            }
+            
+            return mins.Min().ToString();
             //return result.ToString();
         }
     }
@@ -80,9 +111,9 @@ namespace AdventOfCode2023.Day5
         public static MappingProfile CombineMap(this MappingProfile mappingProfile1, MappingProfile mappingProfile2)
         {
             MappingProfile result = new MappingProfile();
-            foreach (var map1 in mappingProfile1.Maps)
+            foreach (var map1 in mappingProfile1.GetWithMissingMap())
             {
-                foreach (var map2 in mappingProfile2.Maps)
+                foreach (var map2 in mappingProfile2.GetWithMissingMap())
                 {
                     Combine(map1, map2, result);
                 }
@@ -92,12 +123,12 @@ namespace AdventOfCode2023.Day5
 
         public static void Combine(Map map1, Map map2, MappingProfile result)
         {
-            if (map1.DR < map2.Source)
+            if (map1.DR <= map2.Source)
             {
                 return;
             }
 
-            if (map1.Destination > map2.SR)
+            if (map1.Destination >= map2.SR)
             {
                 return;
             }
@@ -140,6 +171,10 @@ namespace AdventOfCode2023.Day5
                 };
             }
 
+            if (orderedMap.Count == 1)
+            {
+                yield return orderedMap[0];
+            }
             for (int i = 0; i < orderedMap.Count - 1; i++)
             {
                 var map1 = orderedMap[i];
@@ -151,7 +186,7 @@ namespace AdventOfCode2023.Day5
                     {
                         Source = map1.Source + map1.Range,
                         Destination = map1.Source + map1.Range,
-                        Range = map2.Source - map1.Source - map1.Range - 1
+                        Range = map2.Source - map1.Source - map1.Range,
                     };
                     yield return map;
                 }
@@ -179,7 +214,7 @@ namespace AdventOfCode2023.Day5
 
         public long GetMappedValue(long value)
         {
-            foreach (var map in Maps)
+            foreach (var map in Maps.Distinct())
             {
                 if (map.TryGetMappedValue(value, out var result))
                 {
@@ -192,7 +227,7 @@ namespace AdventOfCode2023.Day5
     }
 
     [DebuggerDisplay("{Source} - {Destination} ({Range})")]
-    public class Map
+    public class Map : IEquatable<Map>
     {
         public long Source { get; set; }
         public long Destination { get; set; }
@@ -212,6 +247,31 @@ namespace AdventOfCode2023.Day5
 
             result = value + Delta;
             return true;
+        }
+
+        public override string ToString()
+        {
+            return $"{Source} - {Destination} ({Range})";
+        }
+
+        public bool Equals(Map? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Source == other.Source && Destination == other.Destination && Range == other.Range;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Map) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Source, Destination, Range);
         }
     }
 
