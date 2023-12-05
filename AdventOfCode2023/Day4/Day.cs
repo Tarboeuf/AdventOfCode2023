@@ -51,7 +51,6 @@ namespace AdventOfCode2023.Day4
             }
 
             return occurrences
-                .DumpLine()
                 .Sum()
                 .ToString();
         }
