@@ -32,7 +32,7 @@ namespace AdventOfCode2023.Day2
                     var kvps = g.Sets.SelectMany(s => s);
                     return new { g.Id, dico = kvps.GroupBy(kvp => kvp.Key).ToDictionary(g => g.Key, g => g.Max(t => t.Value)).DumpLine("Dico") };
                 })
-                .Select(d => d.dico.Values.Mult())
+                .Select(d => d.dico.Values.Multiply())
                 .Sum().ToString();
         }
     }

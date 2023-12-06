@@ -193,7 +193,17 @@ public static class MyEnumerable
         return value;
     }
 
-    public static long Mult(this IEnumerable<int> values)
+    public static int ToInt(this string value)
+    {
+        return int.Parse(value);
+    }
+
+    public static long ToLong(this string value)
+    {
+        return long.Parse(value);
+    }
+
+    public static long Multiply(this IEnumerable<int> values)
     {
         long result = 1;
         foreach (long value in values)
