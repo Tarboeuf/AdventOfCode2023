@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Text;
 
 namespace AdventOfCode.Lib;
 
@@ -173,25 +174,44 @@ public static class MyEnumerable
         {
             return value;
         }
-        string str = value?.ToString() ?? "null";
-        if (value is IDictionary dico)
-        {
-            str = "";
-            for (int i = 0; i < dico.Count; i++)
-            {
-                str += $"{dico.Keys.OfType<object>().ElementAt(i)} : {dico.Values.OfType<object>().ElementAt(i)} , ";
-            }
-        }
-        if (value is IEnumerable values)
-        {
-            var e = values.OfType<object>().ToList();
-            str = $"{string.Concat(e.Select(v => $"{v} /// "))} ({e.Count})";
-        }
+        var str = ToString(value);
 
         entry = entry == null ? null : $"{entry} : ";
         Debug.Write($"{entry}{str}");
         return value;
     }
+
+    public static string ToString(object? value, int inc = 0)
+    {
+        string str = value?.ToString() ?? "null";
+        if (value is IDictionary dictionary)
+        {
+            List<string> values = new List<string>();
+            for (int i = 0; i < dictionary.Count; i++)
+            {
+                values.Add(
+                    $"{dictionary.Keys.OfType<object>().ElementAt(i)} : {ToString(dictionary.Values.OfType<object>().ElementAt(i), inc + 1)}");
+            }
+            str = $"\r\n{"  ".Repeat(inc)}#{string.Join($"\r\n{"  ".Repeat(inc)}#", values)}";
+        }
+        else if (value is IEnumerable values && value is not string)
+        {
+            var e = values.OfType<object>().ToList();
+            str = $"\r\n{"  ".Repeat(inc)}-{string.Join($"\r\n{"  ".Repeat(inc)}-", e.Select((v, index) => $"[{index}]{ToString(v, inc + 1)}"))} ({e.Count})";
+        }
+
+        return str;
+    }
+
+    public static string Repeat(this string value, int count)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < count; i++)
+        {
+            sb.Append(value);
+        }
+        return sb.ToString();
+    }   
 
     public static int ToInt(this string value)
     {
