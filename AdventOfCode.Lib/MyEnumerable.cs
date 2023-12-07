@@ -203,6 +203,16 @@ public static class MyEnumerable
         return str;
     }
 
+    public static List<T> Replace<T>(this IEnumerable<T> values, T oldValue, T newValue)
+    {
+        var result = new List<T>();
+        foreach (var item in values)
+        {
+            result.Add(item.Equals(oldValue) ? newValue : item);
+        }
+        return result;
+    }
+
     public static string Repeat(this string value, int count)
     {
         var sb = new StringBuilder();

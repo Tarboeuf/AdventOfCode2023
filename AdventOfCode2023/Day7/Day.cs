@@ -27,7 +27,79 @@ namespace AdventOfCode2023.Day7
         FiveOfAKind = 6
     }
 
-    public class Hand
+    public class Hand : HandBase
+    {
+        public Hand(string line) : base(line)
+        {
+        }
+
+        protected override int GetValue(char c)
+        {
+            return c switch
+            {
+                'T' => 10,
+                'J' => 11,
+                'Q' => 12,
+                'K' => 13,
+                'A' => 14,
+                _ => c - '0'
+            };
+        }
+    }
+
+    public class HandPart2 : HandBase
+    {
+        public HandPart2(string line) : base(line)
+        {
+        }
+
+        protected override int GetValue(char c)
+        {
+            return c switch
+            {
+                'T' => 10,
+                'J' => 0,
+                'Q' => 12,
+                'K' => 13,
+                'A' => 14,
+                _ => c - '0'
+            };
+        }
+
+        protected override List<int> GetGroupCount()
+        {
+            var group = Cards.GroupBy(c => c).Select(g => g).ToList();
+            int countJ = 0;
+            var groupJ = group.FirstOrDefault(g => g.Key == 0);
+            if (groupJ != null)
+            {
+                countJ = groupJ.Count();
+            }
+
+            var result = group.Where(g => g.Key != 0)
+                .OrderByDescending(g => g.Count())
+                .Select(g =>
+                {
+                    var cnt = g.Count() + countJ;
+                    countJ = 0;
+                    return cnt;
+                })
+                .ToList();
+
+            if (result.Count == 0)
+            {
+                result.Add(5);
+            }
+
+            if (result.Sum() != 5)
+            {
+                throw new InvalidDataException("group");
+            }
+            return result;
+        }
+    }
+
+    public abstract class HandBase
     {
         public List<int> Cards { get; }
         public int Bid { get; }
@@ -35,31 +107,20 @@ namespace AdventOfCode2023.Day7
         public HandValue Weight { get; }
         public double Value { get; private set; }
 
-        public Hand(string line)
+        protected HandBase(string line)
         {
             var parts = line.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             HandValues = parts[0];
-            Cards = parts[0].Select(c => char.IsDigit(c) && c > '1' ? c - '0' : c switch
-            {
-                'T' => 10,
-                'J' => 11,
-                'Q' => 12,
-                'K' => 13,
-                '1' => 14,
-                'A' => 14,
-                _ => throw new ArgumentOutOfRangeException(nameof(c), c, null)
-            } )
-                .ToList();
+            Cards = parts[0].Select(GetValue).ToList();
             Bid = parts[1].ToInt();
             Weight = GetWeight();
         }
 
+        protected abstract int GetValue(char c);
+
         private HandValue GetWeight()
         {
-            var group = Cards.GroupBy(c => c).ToList();
-            //Value = group.OrderBy(g => g.Count())
-            //    .ThenBy(g => g.Key)
-            //    .Select((c, index) => Math.Pow(14, index) * c.Key).Sum();
+            var group = GetGroupCount();
             Value = Cards.Select((c, index) => Math.Pow(14, 5 - index) * c).Sum();
             if (IsFiveOfAKind(group))
             {
@@ -92,33 +153,38 @@ namespace AdventOfCode2023.Day7
             return HandValue.HighCard;
         }
 
-        public bool IsFiveOfAKind(List<IGrouping<int, int>> group)
+        protected virtual List<int> GetGroupCount()
         {
-            return group.Any(g => g.Count() == 5);
+            return Cards.GroupBy(c => c).Select(g => g.Count()).ToList();
         }
 
-        public bool IsFourOfAKind(List<IGrouping<int, int>> group)
+        public bool IsFiveOfAKind(List<int> groupCount)
         {
-            return group.Any(g => g.Count() == 4);
-        }
-        public bool IsThreeOfAKind(List<IGrouping<int, int>> group)
-        {
-            return group.Any(g => g.Count() == 3);
+            return groupCount.Any(g => g == 5);
         }
 
-        public bool IsFullHouse(List<IGrouping<int, int>> group)
+        public bool IsFourOfAKind(List<int> groupCount)
         {
-            return group.Any(g => g.Count() == 3) && group.Any(g => g.Count() == 2);
+            return groupCount.Any(g => g == 4);
+        }
+        public bool IsThreeOfAKind(List<int> groupCount)
+        {
+            return groupCount.Any(g => g == 3);
         }
 
-        public bool IsTwoPair(List<IGrouping<int, int>> group)
+        public bool IsFullHouse(List<int> groupCount)
         {
-            return group.Count(g => g.Count() == 2) == 2;
+            return groupCount.Any(g => g == 3) && groupCount.Any(g => g == 2);
         }
 
-        public bool IsPair(List<IGrouping<int, int>> group)
+        public bool IsTwoPair(List<int> groupCount)
         {
-            return group.Any(g => g.Count() == 2);
+            return groupCount.Count(g => g == 2) == 2;
+        }
+
+        public bool IsPair(List<int> groupCount)
+        {
+            return groupCount.Any(g => g == 2);
         }
 
         public override string ToString()
@@ -127,14 +193,22 @@ namespace AdventOfCode2023.Day7
         }
     }
 
+
+
     [Day(ExpectedValue = "5905", ShouldLog = true)]
     public class Puzzle2 : IDay
     {
         public string GetPuzzle(string input, bool isRealCase)
         {
-            return input.GetLines()
-                .Select(c => new Hand(c))
+            input.GetLines()
+                .Select(c => new HandPart2(c))
                 .OrderBy(h => h.Weight).ThenBy(h => h.Value)
+                .DumpLine();
+
+            return input.GetLines()
+                .Select(c => new HandPart2(c))
+                .OrderBy(h => h.Weight).ThenBy(h => h.Value)
+                .DumpLine("hands")
                 .Select((h, index) => h.Bid * (index + 1))
                 .Sum().ToString();
         }
