@@ -59,9 +59,9 @@ namespace AdventOfCode2023.Day7
             {
                 'T' => 10,
                 'J' => 0,
-                'Q' => 12,
-                'K' => 13,
-                'A' => 14,
+                'Q' => 11,
+                'K' => 12,
+                'A' => 13,
                 _ => c - '0'
             };
         }
@@ -167,6 +167,7 @@ namespace AdventOfCode2023.Day7
         {
             return groupCount.Any(g => g == 4);
         }
+
         public bool IsThreeOfAKind(List<int> groupCount)
         {
             return groupCount.Any(g => g == 3);
@@ -200,11 +201,6 @@ namespace AdventOfCode2023.Day7
     {
         public string GetPuzzle(string input, bool isRealCase)
         {
-            input.GetLines()
-                .Select(c => new HandPart2(c))
-                .OrderBy(h => h.Weight).ThenBy(h => h.Value)
-                .DumpLine();
-
             return input.GetLines()
                 .Select(c => new HandPart2(c))
                 .OrderBy(h => h.Weight).ThenBy(h => h.Value)
