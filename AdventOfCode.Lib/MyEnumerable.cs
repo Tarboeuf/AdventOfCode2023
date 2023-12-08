@@ -41,6 +41,24 @@ public static class MyEnumerable
         return result;
     }
 
+    public static ulong LCM(ulong a, ulong b)
+    {
+        return (a / GCD(a, b)) * b;
+    }
+
+    public static ulong GCD(ulong a, ulong b)
+    {
+        while (a != 0 && b != 0)
+        {
+            if (a > b)
+                a %= b;
+            else
+                b %= a;
+        }
+
+        return a | b;
+    }
+
     public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
     {
         foreach (var value in values)
@@ -208,7 +226,7 @@ public static class MyEnumerable
         var result = new List<T>();
         foreach (var item in values)
         {
-            result.Add(item.Equals(oldValue) ? newValue : item);
+            result.Add(item != null && item.Equals(oldValue) ? newValue : item);
         }
         return result;
     }
