@@ -69,12 +69,6 @@ namespace AdventOfCode2023.Day8
 
     }
 
-    public class Reccurence
-    {
-        public (int inc, char accessPoint)? FirstZREached { get; set; }
-        public int? SecondZREached { get; set; }
-    }
-
     [Day(ExpectedValue = "6", SampleInput = "testInput2.txt")]
     public class Puzzle2 : IDay
     {
@@ -84,7 +78,7 @@ namespace AdventOfCode2023.Day8
 
             int inc = 0;
             var currents = nodes.Values.Where(n => n.Current.EndsWith("A")).ToArray();
-            var recurrences = Enumerable.Range(0, currents.Length).Select(_ => new Reccurence()).ToArray();
+            var recurrences = new ulong?[currents.Length];
             while (true)
             {
                 switch (path[inc++ % path.Length])
@@ -92,44 +86,44 @@ namespace AdventOfCode2023.Day8
                     case 'R':
                         for (int i = 0; i < currents.Length; i++)
                         {
+                            if (recurrences[i] != null)
+                            {
+                                continue;
+                            }
+
                             currents[i] = currents[i].Right.Value;
-                            CheckZREached(currents[i], inc, 'R', recurrences[i]);
+                            recurrences[i] = CheckZReached(currents[i], inc);
                         }
                         break;
                     case 'L':
                         for (int i = 0; i < currents.Length; i++)
                         {
+                            if (recurrences[i] != null)
+                            {
+                                continue;
+                            }
+
                             currents[i] = currents[i].Left.Value;
-                            CheckZREached(currents[i], inc, 'L', recurrences[i]);
+                            CheckZReached(currents[i], inc);
                         }
                         break;
                 }
 
-                if (currents.All(n => n.Current.EndsWith("Z")))
+                if (recurrences.All(n => n != null))
                 {
-                    return (inc).ToString();
-                }
-
-                if (recurrences.All(n => n.FirstZREached != null))
-                {
-                    return recurrences.Select(r => (ulong)r.FirstZREached!.Value.inc).Aggregate(MyEnumerable.LCM).ToString();
+                    return recurrences.Select(r => r!.Value).Aggregate(MyEnumerable.LCM).ToString();
                 }
             }
         }
 
-        private void CheckZREached(Node current, int inc, char c, Reccurence reccurence)
+        private ulong? CheckZReached(Node current, int inc)
         {
             if (current.Current.EndsWith("Z"))
             {
-                if (reccurence.FirstZREached == null)
-                {
-                    reccurence.FirstZREached = (inc, c);
-                }
-                else if (reccurence.SecondZREached == null && c == reccurence.FirstZREached.Value.accessPoint)
-                {
-                    reccurence.SecondZREached = inc;
-                }
+                return (ulong)inc;
             }
+
+            return null;
         }
     }
 }
