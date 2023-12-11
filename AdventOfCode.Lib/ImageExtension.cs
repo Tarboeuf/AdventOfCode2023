@@ -55,8 +55,6 @@ public static class ImageExtension
 
         using (var g = Graphics.FromImage(bitmap))
         {
-            // Modify the image using g here... 
-            // Create a brush with an alpha value and use the g.FillRectangle function
             g.FillPolygon(Brushes.Blue, list.Append(list.First()).Select(p => new Point(p.x, p.y)).ToArray(), FillMode.Winding);
             g.DrawPolygon(new Pen(Brushes.Black), list.Append(list.First()).Select(p => new Point(p.x, p.y)).ToArray());
         }

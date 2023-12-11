@@ -22,6 +22,19 @@ public static class MyEnumerable
         }
     }
 
+    public static IEnumerable<(T, T)> GetAllPairs<T>(this IEnumerable<T> pairs)
+    {
+        var list = pairs.ToList();
+        for (int i = 0; i < list.Count; i++)
+        {
+            for (int j = i + 1; j < list.Count; j++)
+            {
+                yield return (list[i], list[j]);
+            }
+        }
+    }
+
+
     public static IEnumerable<T> Include<T>(this IEnumerable<T> values, T value)
     {
         foreach (var item in values)
