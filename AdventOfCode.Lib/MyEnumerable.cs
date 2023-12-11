@@ -77,6 +77,11 @@ public static class MyEnumerable
         }
     }
 
+    public static bool IsIn<T>(this T value, params T[] values)
+    {
+        return values.Contains(value);
+    }
+
     public static IEnumerable<string> GetLines(this string input, string extraSplit = "")
     {
         foreach (var item in input.Split(Environment.NewLine + extraSplit, StringSplitOptions.RemoveEmptyEntries))
@@ -101,6 +106,21 @@ public static class MyEnumerable
                     continue;
                 }
                 yield return lines[i][j];
+            }
+        }
+    }
+
+    public static IEnumerable<(char c, int x, int y)> GetAllSurroundingWithCoordinates(this string[] lines, int x, int y)
+    {
+        for (int Y = y - 1; Y <= y + 1; Y++)
+        {
+            for (int X = x - 1; X <= x + 1; X++)
+            {
+                if (Y < 0 || X < 0 || Y >= lines.Length || X >= lines[Y].Length || x == X && y == Y)
+                {
+                    continue;
+                }
+                yield return (lines[Y][X], X, Y);
             }
         }
     }
