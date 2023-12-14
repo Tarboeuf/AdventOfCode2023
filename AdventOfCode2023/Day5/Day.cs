@@ -28,7 +28,7 @@ namespace AdventOfCode2023.Day5
             var pairs = extract.Seeds.GetInPairs().ToList();
 
             var globalMappingProfile = extract.MappingProfiles.Aggregate(Extensions.CombineMap);
-            List<long> mins = new List<long>();
+            var mins = new List<long>();
             var orderedMaps = globalMappingProfile.Maps.Distinct().OrderBy(m => m.Destination).ToList();
             foreach (var map in orderedMaps)
             {
@@ -68,7 +68,7 @@ namespace AdventOfCode2023.Day5
             var lines = input.GetLines();
 
             using var enumerator = lines.GetEnumerator();
-            Input result = new Input();
+            var result = new Input();
             enumerator.MoveNext();
             result.Seeds = enumerator.Current.Split(":")[1].Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToArray();
 
@@ -104,7 +104,7 @@ namespace AdventOfCode2023.Day5
     {
         public static MappingProfile CombineMap(this MappingProfile mappingProfile1, MappingProfile mappingProfile2)
         {
-            MappingProfile result = new MappingProfile();
+            var result = new MappingProfile();
             foreach (var map1 in mappingProfile1.GetWithMissingMap())
             {
                 foreach (var map2 in mappingProfile2.GetWithMissingMap())
@@ -169,7 +169,7 @@ namespace AdventOfCode2023.Day5
             {
                 yield return orderedMap[0];
             }
-            for (int i = 0; i < orderedMap.Count - 1; i++)
+            for (var i = 0; i < orderedMap.Count - 1; i++)
             {
                 var map1 = orderedMap[i];
                 var map2 = orderedMap[i + 1];

@@ -12,10 +12,10 @@ namespace AoC.Day1
 
         private char GetFirstNumber(string line)
         {
-            for (int i = 0; i < line.Length; i++)
+            for (var i = 0; i < line.Length; i++)
             {
                 if (char.IsDigit(line[i])) return line[i];
-                for (int j = 0; j < _spelledDigits.Length; j++)
+                for (var j = 0; j < _spelledDigits.Length; j++)
                 {
                     if (line[i..].StartsWith(_spelledDigits[j]))
                     {
@@ -28,12 +28,12 @@ namespace AoC.Day1
         }
         private char GetLastNumber(string line)
         {
-            for (int i = line.Length - 1; i >= 0; i--)
+            for (var i = line.Length - 1; i >= 0; i--)
             {
                 if (char.IsDigit(line[i])) return line[i];
                 var test = line[..^(line.Length - i - 1)].DumpLine("..î");
 
-                for (int j = 0; j < _spelledDigits.Length; j++)
+                for (var j = 0; j < _spelledDigits.Length; j++)
                 {
                     if (test.EndsWith(_spelledDigits[j]))
                     {

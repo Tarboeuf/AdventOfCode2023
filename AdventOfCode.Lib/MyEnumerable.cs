@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml.Linq;
 
@@ -14,9 +15,9 @@ public static class MyEnumerable
 {
     public static IEnumerable<(int x, int y)> GetTableValues(int maxX, int maxY, int startX = 0, int startY = 0)
     {
-        for (int y = startX; y < maxY; y++)
+        for (var y = startX; y < maxY; y++)
         {
-            for (int x = startY; x < maxX; x++)
+            for (var x = startY; x < maxX; x++)
             {
                 yield return (x, y);
             }
@@ -26,9 +27,9 @@ public static class MyEnumerable
     public static IEnumerable<(T, T)> GetAllPairs<T>(this IEnumerable<T> pairs)
     {
         var list = pairs.ToList();
-        for (int i = 0; i < list.Count; i++)
+        for (var i = 0; i < list.Count; i++)
         {
-            for (int j = i + 1; j < list.Count; j++)
+            for (var j = i + 1; j < list.Count; j++)
             {
                 yield return (list[i], list[j]);
             }
@@ -48,7 +49,7 @@ public static class MyEnumerable
     public static ulong Product(this IEnumerable<int> values)
     {
         ulong result = 1;
-        foreach (int value in values)
+        foreach (var value in values)
         {
             result *= (ulong)value;
         }
@@ -106,9 +107,9 @@ public static class MyEnumerable
 
     public static IEnumerable<char> GetAllSurrounding(this string[] lines, int x, int y, int length)
     {
-        for (int i = y - 1; i <= y + 1; i++)
+        for (var i = y - 1; i <= y + 1; i++)
         {
-            for (int j = x - 1; j <= x + length; j++)
+            for (var j = x - 1; j <= x + length; j++)
             {
                 if (i == y && j >= x && j <= (x + length - 1))
                 {
@@ -126,9 +127,9 @@ public static class MyEnumerable
 
     public static IEnumerable<(char c, int x, int y)> GetAllSurroundingWithCoordinates(this string[] lines, int x, int y)
     {
-        for (int Y = y - 1; Y <= y + 1; Y++)
+        for (var Y = y - 1; Y <= y + 1; Y++)
         {
-            for (int X = x - 1; X <= x + 1; X++)
+            for (var X = x - 1; X <= x + 1; X++)
             {
                 if (Y < 0 || X < 0 || Y >= lines.Length || X >= lines[Y].Length || x == X && y == Y)
                 {
@@ -141,9 +142,9 @@ public static class MyEnumerable
 
     public static IEnumerable<NumberPositioned> GetAllSurroundingNumbers(this string[] lines, int x, int y)
     {
-        for (int i = y - 1; i <= y + 1; i++)
+        for (var i = y - 1; i <= y + 1; i++)
         {
-            for (int j = x - 1; j <= x + 1; j++)
+            for (var j = x - 1; j <= x + 1; j++)
             {
                 if (i == y && j == x)
                 {
@@ -166,7 +167,7 @@ public static class MyEnumerable
     public static NumberPositioned GetNumberPositioned(this string line, int x, int y)
     {
         int start = x, end = x;
-        for (int i = x; i >= 0; i--)
+        for (var i = x; i >= 0; i--)
         {
             if (!char.IsDigit(line[i]))
             {
@@ -175,7 +176,7 @@ public static class MyEnumerable
             start = i;
         }
 
-        for (int i = x; i < line.Length; i++)
+        for (var i = x; i < line.Length; i++)
         {
             if (!char.IsDigit(line[i]))
             {
@@ -235,11 +236,11 @@ public static class MyEnumerable
 
     public static string ToString(object? value, int inc = 0)
     {
-        string str = value?.ToString() ?? "null";
+        var str = value?.ToString() ?? "null";
         if (value is IDictionary dictionary)
         {
             List<string> values = new List<string>();
-            for (int i = 0; i < dictionary.Count; i++)
+            for (var i = 0; i < dictionary.Count; i++)
             {
                 values.Add(
                     $"{dictionary.Keys.OfType<object>().ElementAt(i)} : {ToString(dictionary.Values.OfType<object>().ElementAt(i), inc + 1)}");
@@ -265,15 +266,36 @@ public static class MyEnumerable
         return result;
     }
 
-    public static string Repeat(this string value, int count)
+    public static string Repeat(this string value, int count, string inBetween = null)
     {
         var sb = new StringBuilder();
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             sb.Append(value);
+            if (inBetween != null)
+            {
+                sb.Append(inBetween);
+            }
+        }
+
+        if (inBetween != null && sb.Length > inBetween.Length)
+        {
+            sb.Remove(sb.Length - inBetween.Length, inBetween.Length);
         }
         return sb.ToString();
-    }   
+    }
+
+    public static IEnumerable<T> Repeat<T>(this IEnumerable<T> values, int count)
+    {
+        var enumerable = values.ToList();
+        for (var i = 0; i < count; i++)
+        {
+            foreach (var item in enumerable)
+            {
+                yield return item;
+            }
+        }
+    }
 
     public static int ToInt(this string value)
     {
@@ -297,30 +319,51 @@ public static class MyEnumerable
     public static ulong Multiply(this IEnumerable<ulong> values)
     {
         ulong result = 1;
-        foreach (ulong value in values)
+        foreach (var value in values)
         {
             result *= value;
         }
         return result;
     }
 
-    public static IEnumerable<T[]> Combination<T>(this IEnumerable<T> values, int count)
+    public static IEnumerable<IEnumerable<T>> GetPermutations<T>(this List<T> list, int count)
     {
+        var i = 0;
         if (count == 0)
         {
-            return new List<T[]> {Array.Empty<T>()};
+            yield return Enumerable.Empty<T>();
+            yield break;
         }
-
-        var enumerable = values.ToList();
-        if (!enumerable.Any())
+        foreach (var item in list)
         {
-            return new List<T[]>();
+            if (count == 1)
+                yield return new[] { item };
+            else
+            {
+                foreach (var result in GetPermutations(list.Skip(i + 1).ToList(), count - 1))
+                    yield return result.Prepend(item);
+            }
+
+            ++i;
         }
+    }
 
-        var head = enumerable.First();
-        var tail = enumerable.Skip(1);
-
-        return Combination(tail.ToList(), count - 1).Select(c => (new T[] { head }).Concat(c).ToArray());
+    public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> values, Func<T, bool> predicate)
+    {
+        var list = new List<T>();
+        foreach (var item in values)
+        {
+            if (predicate(item))
+            {
+                yield return list;
+                list = new List<T>();
+            }
+            else
+            {
+                list.Add(item);
+            }
+        }
+        yield return list;
     }
 
     public record NumberPositioned
@@ -328,5 +371,27 @@ public static class MyEnumerable
         public int Number { get; init; }
         public int X { get; init; }
         public int Y { get; init; }
+    }
+}
+
+public class ListComparer : IEqualityComparer<List<int>>
+{
+    public Dictionary<List<int>, int> Cache { get; } = new();
+
+    public bool Equals(List<int>? x, List<int>? y)
+    {
+        if (x == null || y == null)
+        {
+            return false;
+        }
+        return x.SequenceEqual(y);
+    }
+
+    public int GetHashCode([DisallowNull] List<int> obj)
+    {
+        if (Cache.TryGetValue(obj, out var value)) return value;
+        value = obj.Select(((v, i) => (v + 1) * (i << 7))).Sum();
+        Cache.Add(obj, value);
+        return value;
     }
 }

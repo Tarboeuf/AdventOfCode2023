@@ -16,8 +16,8 @@ namespace AdventOfCode2023.Day9
 
         private int GetNextValue(IEnumerable<int> values)
         {
-            List<int> currentValues = values.ToList();
-            List<int> lastValues = new List<int>();
+            var currentValues = values.ToList();
+            var lastValues = new List<int>();
             while (true)
             {
                 lastValues.Add(currentValues.Last());
@@ -46,8 +46,8 @@ namespace AdventOfCode2023.Day9
 
         private int GetPreviousValue(IEnumerable<int> values)
         {
-            List<int> currentValues = values.ToList();
-            List<int> firstValues = new List<int>();
+            var currentValues = values.ToList();
+            var firstValues = new List<int>();
             while (true)
             {
                 firstValues.Add(currentValues.First());
@@ -58,7 +58,7 @@ namespace AdventOfCode2023.Day9
                 {
                     firstValues.Reverse();
 
-                    int current  = currentValues.First();
+                    var current  = currentValues.First();
                     foreach (var firstValue in firstValues)
                     {
                         current = firstValue - current;

@@ -114,7 +114,7 @@ namespace AdventOfCode2023.Day10
 
         protected static void CompletePosition(string[] table, (int x, int y) position, Dictionary<(int x, int y), List<(int x, int y)>> visited)
         {
-            Stack<(int x, int y)> toProcess = new Stack<(int x, int y)>();
+            var toProcess = new Stack<(int x, int y)>();
             toProcess.Push(position);
             while (toProcess.Any())
             {

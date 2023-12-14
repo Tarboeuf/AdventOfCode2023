@@ -12,10 +12,10 @@ namespace AdventOfCode2023.Day11
         public string GetPuzzle(string input, bool isRealCase)
         {
             var table = input.GetLines().ToArray();
-            List<(int x, int y)> values = new List<(int x, int y)>();
-            for (int y = 0; y < table.Length; y++)
+            var values = new List<(int x, int y)>();
+            for (var y = 0; y < table.Length; y++)
             {
-                for (int x = 0; x < table[y].Length; x++)
+                for (var x = 0; x < table[y].Length; x++)
                 {
                     if (table[y][x] == '#')
                     {
@@ -24,8 +24,8 @@ namespace AdventOfCode2023.Day11
                 }
             }
 
-            int maxX = values.Max(v => v.x);
-            int maxY = values.Max(v => v.y);
+            var maxX = values.Max(v => v.x);
+            var maxY = values.Max(v => v.y);
             var allX = values.Select(v => v.x).Distinct().OrderBy(v => v).ToArray();
             var allY = values.Select(v => v.y).Distinct().OrderBy(v => v).ToArray();
             var emptyX = Enumerable.Range(0, maxX + 1).Except(allX).OrderByDescending(i => i).ToArray();
@@ -33,7 +33,7 @@ namespace AdventOfCode2023.Day11
 
             var valuesTransformed = new HashSet<(int x, int y)>();
 
-            for (int i = 0; i < values.Count; i++)
+            for (var i = 0; i < values.Count; i++)
             {
                 var value = values[i];
                 valuesTransformed.Add((value.x + emptyX.Count(x => x < value.x),
@@ -44,10 +44,10 @@ namespace AdventOfCode2023.Day11
             maxY = valuesTransformed.Max(v => v.y);
             if (!isRealCase)
             {
-                for (int y = 0; y <= maxY; y++)
+                for (var y = 0; y <= maxY; y++)
                 {
                     Console.WriteLine();
-                    for (int x = 0; x <= maxX; x++)
+                    for (var x = 0; x <= maxX; x++)
                     {
                         Console.Write(valuesTransformed.Contains((x, y)) ? '#' : '.');
                     }
@@ -65,10 +65,10 @@ namespace AdventOfCode2023.Day11
         public string GetPuzzle(string input, bool isRealCase)
         {
             var table = input.GetLines().ToArray();
-            List<(int x, int y)> values = new List<(int x, int y)>();
-            for (int y = 0; y < table.Length; y++)
+            var values = new List<(int x, int y)>();
+            for (var y = 0; y < table.Length; y++)
             {
-                for (int x = 0; x < table[y].Length; x++)
+                for (var x = 0; x < table[y].Length; x++)
                 {
                     if (table[y][x] == '#')
                     {
@@ -77,8 +77,8 @@ namespace AdventOfCode2023.Day11
                 }
             }
 
-            int maxX = values.Max(v => v.x);
-            int maxY = values.Max(v => v.y);
+            var maxX = values.Max(v => v.x);
+            var maxY = values.Max(v => v.y);
             var allX = values.Select(v => v.x).Distinct().OrderBy(v => v).ToArray();
             var allY = values.Select(v => v.y).Distinct().OrderBy(v => v).ToArray();
             var emptyX = Enumerable.Range(0, maxX + 1).Except(allX).OrderByDescending(i => i).ToArray();

@@ -15,9 +15,9 @@ namespace AdventOfCode2023.Day6
 
         private IEnumerable<int> GetDifferentWaysToWin(int time, int distance)
         {
-            for (int i = 0; i < time; i++)
+            for (var i = 0; i < time; i++)
             {
-                int newDistance = i * (time - i);
+                var newDistance = i * (time - i);
                 if(newDistance.Dump("") > distance)
                     yield return i;
             }
@@ -52,7 +52,7 @@ namespace AdventOfCode2023.Day6
             long result = 0;
             for (long i = 0; i < time; i++)
             {
-                long newDistance = i * (time - i);
+                var newDistance = i * (time - i);
                 if (newDistance > distance)
                     result++;
             }

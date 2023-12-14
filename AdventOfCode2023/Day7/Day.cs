@@ -69,7 +69,7 @@ namespace AdventOfCode2023.Day7
         protected override List<int> GetGroupCount()
         {
             var group = Cards.GroupBy(c => c).Select(g => g).ToList();
-            int countJ = 0;
+            var countJ = 0;
             var groupJ = group.FirstOrDefault(g => g.Key == 0);
             if (groupJ != null)
             {

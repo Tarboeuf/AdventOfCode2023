@@ -10,8 +10,8 @@ namespace AdventOfCode2023.Day8
         {
             var nodes = GetNodes(input, out var path);
 
-            int inc = 0;
-            Node current = nodes["AAA"];
+            var inc = 0;
+            var current = nodes["AAA"];
             while (true)
             {
                 switch (path[inc++%path.Length])
@@ -76,7 +76,7 @@ namespace AdventOfCode2023.Day8
         {
             var nodes = Puzzle1.GetNodes(input, out var path);
 
-            int inc = 0;
+            var inc = 0;
             var currents = nodes.Values.Where(n => n.Current.EndsWith("A")).ToArray();
             var recurrences = new ulong?[currents.Length];
             while (true)
@@ -84,7 +84,7 @@ namespace AdventOfCode2023.Day8
                 switch (path[inc++ % path.Length])
                 {
                     case 'R':
-                        for (int i = 0; i < currents.Length; i++)
+                        for (var i = 0; i < currents.Length; i++)
                         {
                             if (recurrences[i] != null)
                             {
@@ -96,7 +96,7 @@ namespace AdventOfCode2023.Day8
                         }
                         break;
                     case 'L':
-                        for (int i = 0; i < currents.Length; i++)
+                        for (var i = 0; i < currents.Length; i++)
                         {
                             if (recurrences[i] != null)
                             {

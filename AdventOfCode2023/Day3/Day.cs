@@ -12,12 +12,12 @@ namespace AdventOfCode2023.Day3
             var width = lines.First().Length;
             var height = lines.Count();
 
-            List<int> values = new List<int>();
-            for (int y = 0; y < height; y++)
+            var values = new List<int>();
+            for (var y = 0; y < height; y++)
             {
                 var line = lines[y];
                 string? currentItem = null;
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
                     var c = line[x];
                     if (!char.IsDigit(c))
@@ -56,11 +56,11 @@ namespace AdventOfCode2023.Day3
             var height = lines.Count();
 
             long result = 0;
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
             {
                 var line = lines[y];
                 
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
                     var c = line[x];
                     if (c == '*')
