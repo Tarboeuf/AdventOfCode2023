@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -23,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\AdventOfCode.Lib\AdventOfCode.Lib.csproj" />
     <ProjectReference Include="..\AdventOfCode2023\AdventOfCode2023.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Day12\" />
   </ItemGroup>
 
 </Project>

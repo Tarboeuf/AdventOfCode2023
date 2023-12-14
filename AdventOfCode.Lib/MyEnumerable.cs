@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Text;
+using System.Xml.Linq;
 
 namespace AdventOfCode.Lib;
 
@@ -292,6 +293,34 @@ public static class MyEnumerable
             result *= value;
         }
         return result;
+    }
+    public static ulong Multiply(this IEnumerable<ulong> values)
+    {
+        ulong result = 1;
+        foreach (ulong value in values)
+        {
+            result *= value;
+        }
+        return result;
+    }
+
+    public static IEnumerable<T[]> Combination<T>(this IEnumerable<T> values, int count)
+    {
+        if (count == 0)
+        {
+            return new List<T[]> {Array.Empty<T>()};
+        }
+
+        var enumerable = values.ToList();
+        if (!enumerable.Any())
+        {
+            return new List<T[]>();
+        }
+
+        var head = enumerable.First();
+        var tail = enumerable.Skip(1);
+
+        return Combination(tail.ToList(), count - 1).Select(c => (new T[] { head }).Concat(c).ToArray());
     }
 
     public record NumberPositioned
