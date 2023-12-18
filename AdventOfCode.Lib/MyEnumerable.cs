@@ -35,8 +35,7 @@ public static class MyEnumerable
             }
         }
     }
-
-
+    
     public static IEnumerable<T> Include<T>(this IEnumerable<T> values, T value)
     {
         foreach (var item in values)
@@ -104,7 +103,53 @@ public static class MyEnumerable
             yield return item;
         }
     }
+    
+    public static List<List<char>> GetColumns(this string input, string extraSplit = "")
+    {
+        List<List<char>> result = new List<List<char>>();
+        foreach (var item in input.Split(Environment.NewLine + extraSplit, StringSplitOptions.RemoveEmptyEntries))
+        {
+            if (result.Count == 0)
+            {
+                foreach (var t in item)
+                {
+                    result.Add(new List<char> {t});
+                }
+            }
+            else
+            {
+                for (var i = 0; i < item.Length; i++)
+                {
+                    result[i].Add(item[i]);
+                }
+            }
+        }
 
+        return result;
+    }
+
+    public static IEnumerable<int> GetIndexesOf(this List<char> input, char value)
+    {
+        for (var i = 0; i < input.Count; i++)
+        {
+            if (input[i] == value)
+            {
+                yield return i;
+            }
+        }
+    }
+
+    public static IEnumerable<int> GetIndexesOf(this string input, char value)
+    {
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i] == value)
+            {
+                yield return i;
+            }
+        }
+    }
+    
     public static IEnumerable<char> GetAllSurrounding(this string[] lines, int x, int y, int length)
     {
         for (var i = y - 1; i <= y + 1; i++)
@@ -316,15 +361,6 @@ public static class MyEnumerable
         }
         return result;
     }
-    public static ulong Multiply(this IEnumerable<ulong> values)
-    {
-        ulong result = 1;
-        foreach (var value in values)
-        {
-            result *= value;
-        }
-        return result;
-    }
 
     public static IEnumerable<IEnumerable<T>> GetPermutations<T>(this List<T> list, int count)
     {
@@ -346,6 +382,11 @@ public static class MyEnumerable
 
             ++i;
         }
+    }
+
+    public static bool IsNullOrEmpty(this string? value)
+    {
+        return string.IsNullOrEmpty(value);
     }
 
     public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> values, Func<T, bool> predicate)
@@ -374,11 +415,18 @@ public static class MyEnumerable
     }
 }
 
-public class ListComparer : IEqualityComparer<List<int>>
+public class ListComparer<T> : IEqualityComparer<List<T>>
 {
-    public Dictionary<List<int>, int> Cache { get; } = new();
+    private readonly Func<T, long> _unique;
 
-    public bool Equals(List<int>? x, List<int>? y)
+    public ListComparer(Func<T, long> unique)
+    {
+        _unique = unique;
+    }
+
+    public Dictionary<List<T>, long> Cache { get; } = new();
+
+    public bool Equals(List<T>? x, List<T>? y)
     {
         if (x == null || y == null)
         {
@@ -387,11 +435,16 @@ public class ListComparer : IEqualityComparer<List<int>>
         return x.SequenceEqual(y);
     }
 
-    public int GetHashCode([DisallowNull] List<int> obj)
+    public int GetHashCode([DisallowNull] List<T> obj)
     {
-        if (Cache.TryGetValue(obj, out var value)) return value;
-        value = obj.Select(((v, i) => (v + 1) * (i << 7))).Sum();
-        Cache.Add(obj, value);
-        return value;
+        unchecked
+        {
+            int hash = 19;
+            foreach (var foo in obj)
+            {
+                hash = hash * 31 + _unique(foo).GetHashCode();
+            }
+            return hash;
+        }
     }
 }

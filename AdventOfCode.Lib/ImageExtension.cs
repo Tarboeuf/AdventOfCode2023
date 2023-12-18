@@ -27,21 +27,23 @@ public static class ImageExtension
         bitmap.Save(filePath);
     }
 
-    public static void ExportImage(this IEnumerable<(int x, int y)> path, int width, int height, string filePath)
+    public static void ExportImage(this IEnumerable<(int x, int y)> pixels, IEnumerable<(int x, int y)> otherPixels, int width, int height, string filePath)
     {
         var imageHeight = height;
         var imageWidth = width;
         var bitmap = new Bitmap(imageWidth, imageHeight);
-        var hash = path.ToHashSet();
+        var hash = pixels.ToHashSet();
+        var hashOther = otherPixels.ToHashSet();
 
         for (var y = 0; y < imageHeight; y++)
         {
             for (var x = 0; x < imageWidth; x++)
             {
-                bitmap.SetPixel(x, y, hash.Contains((x, y)) ? Color.Black : Color.White);
+                bitmap.SetPixel(x, y, hash.Contains((x, y)) ? Color.Navy : (hashOther.Contains((x, y)) ? Color.Red : Color.White));
             }
         }
 
+        File.Delete(filePath);
         bitmap.Save(filePath);
     }
 
